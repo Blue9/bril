@@ -1,0 +1,17 @@
+main {
+  v0: int = call hello;
+  print v0;
+}
+
+hello: int {
+  v0: int = const 1;
+  v1: int = const 2;
+  v2: int = add v0 v1;
+  world {
+    v9: int = const 6969;
+    print v9;
+  }
+  call world;
+  ret v2;
+
+}
