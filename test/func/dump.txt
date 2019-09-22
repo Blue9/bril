@@ -43,67 +43,28 @@
           "type": "int"
         },
         {
-          "args": [
-            {
-              "name": "a",
-              "type": "int"
-            }
-          ],
           "instrs": [
-            {
-              "args": [
-                "a"
-              ],
-              "op": "print"
-            },
             {
               "dest": "v9",
               "op": "const",
               "type": "int",
-              "value": 1
+              "value": 6969
             },
             {
               "args": [
                 "v9"
               ],
               "op": "print"
-            },
-            {
-              "dest": "v8",
-              "op": "const",
-              "type": "int",
-              "value": 2
-            },
-            {
-              "args": [
-                "v8"
-              ],
-              "op": "ret"
             }
           ],
           "name": "world",
           "type": "int"
         },
         {
-          "dest": "v3",
-          "op": "const",
-          "type": "int",
-          "value": 0
-        },
-        {
           "args": [
-            "world",
-            "v3"
+            "world"
           ],
-          "dest": "v11",
-          "op": "call",
-          "type": "int"
-        },
-        {
-          "args": [
-            "v11"
-          ],
-          "op": "print"
+          "op": "call"
         },
         {
           "args": [

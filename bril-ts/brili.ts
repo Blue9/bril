@@ -248,11 +248,14 @@ function evalInstr(
 }
 
 function evalFunc(func: bril.Function, env: Env, functionMap: FunctionMap) {
+
+
   for (let i = 0; i < func.instrs.length; ++i) {
     let line = func.instrs[i];
     // Update functions map if hit nested functions
     if ('name' in line) {
       functionMap.set(line['name'], line);
+
     }
     if ('op' in line) {
       let action = evalInstr(line, env, functionMap);
@@ -273,6 +276,7 @@ function evalFunc(func: bril.Function, env: Env, functionMap: FunctionMap) {
       }
     }
   }
+
 }
 
 function evalProg(prog: bril.Program, cliArgs: (Number | Boolean)[]) {
