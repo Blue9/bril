@@ -1,9 +1,9 @@
-main {
+def main {
   v0: int = call hello;
   print v0;
 }
 
-hello: int {
+def hello: int {
   v0: int = const 1;
   v1: int = const 2;
   v2: int = add v0 v1;

@@ -1,9 +1,9 @@
-main {
+def main {
   v: int = const 4;
   b: bool = const false;
   br b there here;
-here:
+def here:
   v: int = const 2;
-there:
+def there:
   print v;
 }

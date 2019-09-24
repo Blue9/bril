@@ -1,4 +1,4 @@
-main {
+def main {
   v: int = const 4;
   jmp somewhere;
   v: int = const 2;
