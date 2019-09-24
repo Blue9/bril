@@ -20,6 +20,7 @@ GRAMMAR = """
 start: func*
 
 func: "def" CNAME arg* "{" instr* "}" | "def" CNAME arg* ":" type "{" instr* "}"
+  | CNAME arg* "{" instr* "}" | CNAME arg* "{" instr* "}"
 
 ?instr: func | const | vop | eop | label
 

@@ -1,4 +1,4 @@
-def main {
+main {
   v0: int = const 4;
   v1: int = call double v0;
   print v1;
