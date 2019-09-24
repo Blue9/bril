@@ -83,7 +83,9 @@ let END: Action = { "end": true };
 function evalInstr(
   instr: bril.Instruction,
   env: Env,
-  functionMap: FunctionMap): Action {
+  functionMap: FunctionMap,
+  localMap: FunctionMap
+): Action {
   // Check that we have the right number of arguments.
   if (instr.op !== "const") {
     let count = argCounts[instr.op];
@@ -206,9 +208,10 @@ function evalInstr(
 
     case "call": {
       let name = instr.args[0];
-      if (functionMap.has(name)) {
+      if (functionMap.has(name) || localMap.has(name)) {
         let newEnv = new Map();
-        let func = functionMap.get(name) as bril.Function;
+        let func = (functionMap.has(name)) ? functionMap.get(name) as
+          bril.Function : localMap.get(name) as bril.Function
         let args = instr.args.slice(1);
         if (func.args === undefined && args.length > 0
           || args.length > 0 && func.args.length !== args.length) {
@@ -230,7 +233,6 @@ function evalInstr(
       }
       return NEXT;
     }
-
     case "ret": {
       if (instr.args.length > 0) {
         let returnVal = env.get(instr.args[0]);
@@ -238,7 +240,6 @@ function evalInstr(
       }
       return END;
     }
-
     case "nop": {
       return NEXT;
     }
@@ -248,18 +249,15 @@ function evalInstr(
 }
 
 function evalFunc(func: bril.Function, env: Env, functionMap: FunctionMap) {
-
-
+  let localfuns: FunctionMap = new Map();
   for (let i = 0; i < func.instrs.length; ++i) {
     let line = func.instrs[i];
-    // Update functions map if hit nested functions
+    // Update local function map with functions in nested scope
     if ('name' in line) {
-      functionMap.set(line['name'], line);
-
+      localfuns.set(line['name'], line);
     }
     if ('op' in line) {
-      let action = evalInstr(line, env, functionMap);
-
+      let action = evalInstr(line, env, functionMap, localfuns);
       if ('label' in action) {
         // Search for the label and transfer control.
         for (i = 0; i < func.instrs.length; ++i) {
@@ -276,7 +274,6 @@ function evalFunc(func: bril.Function, env: Env, functionMap: FunctionMap) {
       }
     }
   }
-
 }
 
 function evalProg(prog: bril.Program, cliArgs: (Number | Boolean)[]) {

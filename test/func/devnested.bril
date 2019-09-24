@@ -10,6 +10,13 @@ def hello: int {
   v2: int = add v0 v1;
 
   def world (a:int): int {
+    def inception (b:int) : int {
+	v0: int = const 9999;
+	print v0;
+	ret v0;
+    }
+    v20: int = call inception;
+    print v20;
     print a;
     v9: int = const 1;
     print v9;

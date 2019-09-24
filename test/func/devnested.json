@@ -1,0 +1,178 @@
+{
+  "functions": [
+    {
+      "instrs": [
+        {
+          "args": [
+            "hello"
+          ],
+          "dest": "v0",
+          "op": "call",
+          "type": "int"
+        },
+        {
+          "args": [
+            "v0"
+          ],
+          "op": "print"
+        },
+        {
+          "args": [
+            "world",
+            "v0"
+          ],
+          "dest": "v1",
+          "op": "call",
+          "type": "int"
+        },
+        {
+          "args": [
+            "v1"
+          ],
+          "op": "print"
+        }
+      ],
+      "name": "main"
+    },
+    {
+      "instrs": [
+        {
+          "dest": "v0",
+          "op": "const",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "dest": "v1",
+          "op": "const",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "args": [
+            "v0",
+            "v1"
+          ],
+          "dest": "v2",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            {
+              "name": "a",
+              "type": "int"
+            }
+          ],
+          "instrs": [
+            {
+              "args": [
+                {
+                  "name": "b",
+                  "type": "int"
+                }
+              ],
+              "instrs": [
+                {
+                  "dest": "v0",
+                  "op": "const",
+                  "type": "int",
+                  "value": 9999
+                },
+                {
+                  "args": [
+                    "v0"
+                  ],
+                  "op": "print"
+                },
+                {
+                  "args": [
+                    "v0"
+                  ],
+                  "op": "ret"
+                }
+              ],
+              "name": "inception",
+              "type": "int"
+            },
+            {
+              "args": [
+                "inception"
+              ],
+              "dest": "v20",
+              "op": "call",
+              "type": "int"
+            },
+            {
+              "args": [
+                "v20"
+              ],
+              "op": "print"
+            },
+            {
+              "args": [
+                "a"
+              ],
+              "op": "print"
+            },
+            {
+              "dest": "v9",
+              "op": "const",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "args": [
+                "v9"
+              ],
+              "op": "print"
+            },
+            {
+              "dest": "v8",
+              "op": "const",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "args": [
+                "v8"
+              ],
+              "op": "ret"
+            }
+          ],
+          "name": "world",
+          "type": "int"
+        },
+        {
+          "dest": "v3",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "args": [
+            "world",
+            "v3"
+          ],
+          "dest": "v11",
+          "op": "call",
+          "type": "int"
+        },
+        {
+          "args": [
+            "v11"
+          ],
+          "op": "print"
+        },
+        {
+          "args": [
+            "v2"
+          ],
+          "op": "ret"
+        }
+      ],
+      "name": "hello",
+      "type": "int"
+    }
+  ]
+}
