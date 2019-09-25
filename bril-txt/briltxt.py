@@ -17,8 +17,9 @@ __version__ = '0.0.1'
 # Text format parser.
 
 GRAMMAR = """
-start: func*
+start: use* func*
 
+use: "use" CNAME
 func: CNAME arg* "{" instr* "}" | CNAME arg* ":" type "{" instr* "}"
 def_func: "def" func
 
@@ -50,8 +51,17 @@ COMMENT: /#.*/
 
 class JSONTransformer(lark.Transformer):
     def start(self, items):
+        imports = [items.pop(0) for item in items if 'items' in item]
+        if len(imports):
+            return {'imports': imports, 'functions': items}
         return {'functions': items}
 
+    def use(self, items):
+        module_name = items[0]
+        with open('{}.bril'.format(module_name)) as mod:
+            program = json.loads(parse_bril(mod.read()))
+        return {'name': module_name, 'items': program}
+    
     def func(self, items):
         name = items.pop(0)
         args = []

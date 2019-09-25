@@ -1,0 +1,12 @@
+use mod
+
+main {
+  def func : int {
+    v0: int = const 23;
+    v1: int = add v0 v0;
+    v2: int = add v0 v1;
+    ret v2;
+  }
+  v0: int = call func;
+  print v0;
+}
