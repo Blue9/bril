@@ -51,22 +51,19 @@ COMMENT: /#.*/
 
 class JSONTransformer(lark.Transformer):
     def start(self, items):
-        imports = [items.pop(0) for item in items if 'items' in item]
+        imports = [items.pop(0) for item in items if 'name' not in item]
         if len(imports):
             return {'imports': imports, 'functions': items}
         return {'functions': items}
 
     def use(self, items):
-        module_name = items[0]
-        with open('{}.bril'.format(module_name)) as mod:
-            program = json.loads(parse_bril(mod.read()))
-        return {'name': module_name, 'items': program}
-    
+        return items[0]  # The module name
+
     def func(self, items):
         name = items.pop(0)
         args = []
-        while len(items) > 0 and type(items[0]) == lark.tree.Tree and \
-            items[0].data == "arg":
+        while (len(items) > 0 and type(items[0]) == lark.tree.Tree and
+            items[0].data == "arg"):
             arg = items.pop(0).children
             args.append(
                 dict(name=arg[0], type=arg[1] if len(arg) > 1 else None))
@@ -133,6 +130,12 @@ def parse_bril(txt):
     parser = lark.Lark(GRAMMAR)
     tree = parser.parse(txt)
     data = JSONTransformer().transform(tree)
+    function_names = [f['name'] for f in data['functions']]
+    unique = set()
+    dups = [f for f in function_names if f in unique and not unique.add(f)]
+    if len(dups) > 0:
+        raise RuntimeError(
+            'Function(s) defined twice: {}'.format(', '.join(dups)))
     return json.dumps(data, indent=2, sort_keys=True)
 
 
@@ -182,6 +185,32 @@ def print_prog(prog):
         print_func(func)
 
 
+def load_modules(prog):
+    if 'imports' not in prog:
+        return json.dumps(prog, indent=2, sort_keys=True)
+    modules = set(prog['imports'])
+    global_function_map = {f['name']: f for f in prog['functions']}
+    while len(modules) > 0:
+        mod = modules.pop()
+        try:
+            with open('{}.bril'.format(mod)) as f:
+                loaded_prog = json.loads(parse_bril(f.read()))
+        except IOError:
+            sys.stderr.write('Failed to load {}.bril'.format(mod))
+            sys.stderr.flush()
+            sys.exit(1)
+    modules.update(loaded_prog.get('imports', []))
+    dups = {f['name'] for f in loaded_prog['functions']}
+    dups.intersection_update(global_function_map.keys())
+    if len(dups) > 0:
+        raise RuntimeError(
+            'Function(s) defined twice: {}'.format(', '.join(dups)))
+    global_function_map.update({f['name']: f for f in loaded_prog['functions']})
+    return json.dumps(
+        dict(functions=list(global_function_map.values())),
+        indent=2,
+        sort_keys=True)
+
 # Command-line entry points.
 
 def bril2json():
@@ -190,3 +219,7 @@ def bril2json():
 
 def bril2txt():
     print_prog(json.load(sys.stdin))
+
+
+def json2loaded():
+    print(load_modules(json.load(sys.stdin)))
