@@ -190,26 +190,26 @@ def print_prog(prog):
 def load_modules(prog):
     if 'imports' not in prog:
         return json.dumps(prog, indent=2, sort_keys=True)
-    modules = set(prog['imports'])
-    global_function_map = {f['name']: f for f in prog['functions']}
-    while len(modules) > 0:
-        mod = modules.pop()
+    module_names = set(prog['imports'])
+    all_functions_map = {f['name']: f for f in prog['functions']}
+    while len(module_names) > 0:
+        module_name = module_names.pop()
         try:
-            with open('{}.bril'.format(mod)) as f:
+            with open('{}.bril'.format(module_name)) as f:
                 loaded_prog = json.loads(parse_bril(f.read()))
         except IOError:
-            sys.stderr.write('Failed to load {}.bril'.format(mod))
+            sys.stderr.write('Failed to load {}.bril'.format(module_name))
             sys.stderr.flush()
             sys.exit(1)
-    modules.update(loaded_prog.get('imports', []))
+    module_names.update(loaded_prog.get('imports', []))
     dups = {f['name'] for f in loaded_prog['functions']}
-    dups.intersection_update(global_function_map.keys())
+    dups.intersection_update(all_functions_map.keys())
     if len(dups) > 0:
         raise RuntimeError(
             'Function(s) defined twice: {}'.format(', '.join(dups)))
-    global_function_map.update({f['name']: f for f in loaded_prog['functions']})
+    all_functions_map.update({f['name']: f for f in loaded_prog['functions']})
     return json.dumps(
-        dict(functions=list(global_function_map.values())),
+        dict(functions=list(all_functions_map.values())),
         indent=2,
         sort_keys=True)
 
