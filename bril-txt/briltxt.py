@@ -19,7 +19,7 @@ __version__ = '0.0.1'
 GRAMMAR = """
 start: use* func*
 
-use: "use" CNAME
+use: "use" CNAME ";"
 func: CNAME arg* "{" instr* "}" | CNAME arg* ":" type "{" instr* "}"
 def_func: "def" func
 
@@ -51,7 +51,9 @@ COMMENT: /#.*/
 
 class JSONTransformer(lark.Transformer):
     def start(self, items):
-        imports = [items.pop(0) for item in items if 'name' not in item]
+        imports = []
+        while len(items) > 0 and type(items[0]) == lark.lexer.Token:
+            imports.append(items.pop(0))
         if len(imports):
             return {'imports': imports, 'functions': items}
         return {'functions': items}
